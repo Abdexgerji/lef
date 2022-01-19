@@ -9,6 +9,7 @@ import {
   UploadOutlined,
   QuestionOutlined,
   CloseOutlined,
+  UserSwitchOutlined,
 } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import AddLessonForm from '../../../../components/forms/AddLessonForm';
@@ -16,7 +17,7 @@ import { toast } from 'react-toastify';
 import Item from 'antd/lib/list/Item';
 
 const CourseView = () => {
-  const [course, setCourse] = useState({});
+  const [course, setCourse] = useState(null);
 
   // for lessons
   const [visible, setVisible] = useState(false);
@@ -29,27 +30,53 @@ const CourseView = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadButtonText, setUploadButtonText] = useState('Upload Video');
   const [progress, setProgress] = useState(0);
+  // students enrolled count
+  const [students, setStudents] = useState(0);
 
   const router = useRouter();
   const { slug } = router.query;
 
   useEffect(() => {
+    const loadCourse = async () => {
+      try {
+        if (slug) {
+          const { data } = await axios.get(`/api/course/${slug}`);
+          // console.log(slug);
+          // console.log(router);
+          setCourse({
+            ...data,
+            lessons: [
+              { title: 'a' },
+              { title: 'b' },
+              { title: 'c' },
+              { title: 'd' },
+              { title: 'e' },
+              { title: 'f' },
+            ],
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        toast('No course found, Use correct slug or course link!');
+        setTimeout(() => {
+          router.push('/');
+        }, 3000);
+      }
+    };
     loadCourse();
+    // console.log('lol');
   }, [slug]);
 
-  const loadCourse = async () => {
-    const { data } = await axios.get(`/api/course/${slug}`);
-    setCourse({
-      ...data,
-      lessons: [
-        { title: 'a' },
-        { title: 'b' },
-        { title: 'c' },
-        { title: 'd' },
-        { title: 'e' },
-        { title: 'f' },
-      ],
+  useEffect(() => {
+    course && studentCount();
+  }, [course]);
+
+  const studentCount = async () => {
+    const { data } = await axios.post(`/api/instructor/student-count`, {
+      courseId: course.course_id,
     });
+    // console.log('STUDENT COUNT => ', data);
+    setStudents(data.length);
   };
 
   // FUNCTIONS FOR ADD LESSON
@@ -167,6 +194,7 @@ const CourseView = () => {
     <InstructorRoute>
       <div className='contianer-fluid pt-3'>
         {/* <pre>{JSON.stringify(course, null, 4)}</pre> */}
+        <pre>{JSON.stringify(values, null, 4)}</pre>
         {course && (
           <div className='container-fluid pt-1'>
             <div className='d-flex pt-2'>
@@ -184,6 +212,9 @@ const CourseView = () => {
                 </div>
 
                 <div className='float-end pe-4'>
+                  <Tooltip title={`${students} Enrolled`}>
+                    <UserSwitchOutlined className='h5 pointer text-info me-4' />
+                  </Tooltip>
                   <Tooltip title='Edit'>
                     <EditOutlined
                       onClick={() =>

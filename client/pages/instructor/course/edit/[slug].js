@@ -57,28 +57,38 @@ const CourseEdit = () => {
   }, [values.paid]);
 
   const loadCourse = async () => {
-    const { data } = await axios.get(`/api/course/${slug}`);
-    // console.log('data==>', data);
-    let paid = data.paid;
-    if (data.paid) {
-      paid = true;
-    } else {
-      paid = false;
+    try {
+      if (slug) {
+        const { data } = await axios.get(`/api/course/${slug}`);
+        // console.log('data==>', data);
+        let paid = data.paid;
+        if (data.paid) {
+          paid = true;
+        } else {
+          paid = false;
+        }
+        setValues({
+          ...data,
+          paid,
+          lessons: [
+            { title: 'a' },
+            { title: 'b' },
+            { title: 'c' },
+            { title: 'd' },
+            { title: 'e' },
+            { title: 'f' },
+          ],
+        });
+        if (data && data.image) setImage(data.image);
+        // console.log('values', values);
+      }
+    } catch (error) {
+      console.log(error);
+      toast('No course found, Use correct slug or course link!');
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
     }
-    setValues({
-      ...data,
-      paid,
-      lessons: [
-        { title: 'a' },
-        { title: 'b' },
-        { title: 'c' },
-        { title: 'd' },
-        { title: 'e' },
-        { title: 'f' },
-      ],
-    });
-    if (data && data.image) setImage(data.image);
-    // console.log('values', values);
   };
 
   const handleChange = (e) => {
@@ -137,6 +147,9 @@ const CourseEdit = () => {
       });
       toast('Course updated!');
       setValues({ ...data });
+      setTimeout(() => {
+        router.push(`/instructor/course/edit/${data.slug}`);
+      }, 2000);
       // router.push('/instructor');
     } catch (err) {
       toast(err.response.data);
@@ -195,7 +208,10 @@ const CourseEdit = () => {
     setValues({ ...values, lessons: allLessons });
     // send request to server
     try {
-      const { data } = await axios.put(`/api/course/lessonRemove`, removed[0]);
+      const { data } = await axios.put(
+        `/api/course/lessonRemove/${slug}`,
+        removed[0]
+      );
       console.log('LESSON DELETED =>', data);
       toast('Delete Successfull!!');
     } catch (error) {
@@ -251,7 +267,7 @@ const CourseEdit = () => {
     // console.log("**SEND TO BACKEND**");
     // console.table({ values });
     let { data } = await axios.put(
-      `/api/course/lesson/${values._id}/${current._id}`,
+      `/api/course/lesson/${slug}/${current._id}`,
       current
     );
     // console.log("LESSON UPDATED AND SAVED ===> ", data);
@@ -357,7 +373,7 @@ const CourseEdit = () => {
           progress={progress}
           uploading={uploading}
         />
-        {/* <pre>{JSON.stringify(current, null, 4)}</pre> */}
+        <pre>{JSON.stringify(current, null, 4)}</pre>
       </Modal>
     </InstructorRoute>
   );

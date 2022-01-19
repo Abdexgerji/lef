@@ -62,13 +62,13 @@ const UserIndex = () => {
                     </a>
                   </Link>
                   <p style={{ marginTop: '-10px' }}>
-                    {course.lessons.length} lessons
+                    {course.lessons_amount} lessons
                   </p>
                   <p
                     className='text-muted'
                     style={{ marginTop: '-15px', fontSize: '12px' }}
                   >
-                    By {course.instructor.name}
+                    By {course.instructor_id}
                   </p>
                 </div>
                 <div className='col-md-3 mt-3 text-center'>

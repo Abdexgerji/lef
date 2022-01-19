@@ -58,13 +58,14 @@ app.get('/api/csrf-token', (req, res) => {
 
 // Global Error Handler. IMPORTANT function params MUST start with err
 app.use((err, req, res, next) => {
-  console.log(err.stack);
-  console.log(err.name);
-  console.log(err.code);
-
-  res.status(500).json({
-    message: 'Something went really wrong',
-  });
+  console.log('err.stack==>', err.stack);
+  console.log('err.name==>', err.name);
+  console.log('err.code==>', err.code);
+  console.log('err==>', err);
+  if (err.stack.includes('jwt expired')) {
+    res.status(400).send('Login again!');
+  }
+  res.status(500).send('Internal server error!');
 });
 
 // import fs from 'fs';

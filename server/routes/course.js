@@ -26,12 +26,15 @@ import {
   freeEnrollment,
   paidEnrollment,
   userCourses,
+  markCompleted,
+  lessonListCompleted,
+  markIncomplete,
 } from '../controllers/course';
 
 router.get('/courses', courses);
 
 // the one below  is mine
-router.put('/course/lessonRemove', requireSignin, removeLesson);
+router.put('/course/lessonRemove/:slug', requireSignin, removeLesson);
 
 // image
 router.post('/course/upload-image', uploadImage);
@@ -69,4 +72,8 @@ router.post('/paid-enrollment/:courseId', requireSignin, paidEnrollment);
 router.get('/user-courses', requireSignin, userCourses);
 router.get('/user/course/:slug', requireSignin, isEnrolled, read);
 
+// mark completed
+router.post('/mark-completed', requireSignin, markCompleted);
+router.post('/mark-incomplete', requireSignin, markIncomplete);
+router.post('/lessons-completed', requireSignin, lessonListCompleted);
 module.exports = router;

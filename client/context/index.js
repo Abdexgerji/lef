@@ -1,6 +1,7 @@
 import { useReducer, createContext, useEffect } from 'react';
 import axios from 'axios';
-import { useRouter, userRouter } from 'next/router';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 // initial state
 const intialState = {
@@ -46,7 +47,7 @@ const Provider = ({ children }) => {
       // any status codes that falls outside the range of 2xx cause this function
       // to trigger
       let res = error.response;
-      if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
+      if (res?.status === 401 && res.config && !res?.config.__isRetryRequest) {
         return new Promise((resolve, reject) => {
           axios
             .get('/api/logout')
@@ -68,9 +69,14 @@ const Provider = ({ children }) => {
 
   useEffect(() => {
     const getCsrfToken = async () => {
-      const { data } = await axios.get('/api/csrf-token');
-      // console.log('CSRF', data);
-      axios.defaults.headers['X-CSRF-Token'] = data.getCsrfToken;
+      try {
+        const { data } = await axios.get('/api/csrf-token');
+        // console.log('CSRF', data);
+        axios.defaults.headers['X-CSRF-Token'] = data.getCsrfToken;
+      } catch (error) {
+        console.log('Error');
+        toast('Error!');
+      }
     };
     getCsrfToken();
   }, []);

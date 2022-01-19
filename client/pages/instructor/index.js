@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import axios from 'axios';
 import InstructorRoute from '../../components/routes/InstructorRoute';
 import { Avatar, Badge } from 'antd';
@@ -31,14 +31,22 @@ const InstructorIndex = () => {
       )}
 
       {courses?.map((course) => (
-        <>
+        <Fragment key={course.course_id}>
           <div className='media pt-2'>
             <Avatar size={80} src={'/course.png'} />
 
             <div className='media-body pl-2'>
               <div className='row'>
                 <div className='col'>
-                  <Badge count={course?.paid ? course?.price : 'Free'}>
+                  <Badge
+                    count={
+                      course?.paid && course?.price !== 0
+                        ? course?.price.toFixed(2)
+                        : /**  : course?.price == 0
+                        ? 'Free'*/
+                          'Free'
+                    }
+                  >
                     <Link
                       href={`/instructor/course/view/${course.slug}`}
                       className='pointer'
@@ -78,14 +86,14 @@ const InstructorIndex = () => {
                     <div>
                       <CloseCircleOutlined className='h5 pointer text-warning' />
                       <br />
-                      <small className='text-muted'>Unpublished</small>
+                      <small className='text-muted'>Not published</small>
                     </div>
                   )}
                 </div>
               </div>
             </div>
           </div>
-        </>
+        </Fragment>
       ))}
     </InstructorRoute>
   );

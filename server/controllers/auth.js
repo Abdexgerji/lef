@@ -107,7 +107,7 @@ export const currentUser = async (req, res) => {
     ]);
 
     const user = user1[0][0];
-    user.password = undefined;
+    delete user.password;
 
     console.log('CURRENT_USER', user);
     return res.json({ ok: true });

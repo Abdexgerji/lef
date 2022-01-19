@@ -33,7 +33,8 @@ export const makeInstructor = async (req, res) => {
   }
 };
 
-export const getAccountStatus = async (req, res) => {
+// make instructor
+export const becomeInstructor = async (req, res) => {
   try {
     // const user = await User.findById(req.user._id).exec();
     const getUser = await pool.execute('SELECT * FROM `user` WHERE id = ?;', [
@@ -105,6 +106,20 @@ export const instructorCourses = async (req, res) => {
     //   .sort({ createdAt: -1 })
     //   .exec();
     res.json(courses);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// const { data } = await axios.post(`/api/instructor/tudent-count`,{  courseId: course.course_id,});
+//router.post('/instructor/student-count', requireSignin, studentCount);
+export const studentCount = async (req, res) => {
+  try {
+    res.send('Not finished!');
+    // const users = await User.find({ courses: req.body.courseId })
+    //   .select('_id')
+    //   .exec();
+    // res.json(users);
   } catch (err) {
     console.log(err);
   }

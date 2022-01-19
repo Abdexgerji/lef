@@ -23,7 +23,7 @@ const BecomeInstructor = () => {
     // console.log("become instructor");
     setLoading(true);
     axios
-      .post('/api/get-account-status')
+      .post('/api/become-instructor')
       .then((res) => {
         // console.log(res);
         dispatch({
@@ -52,9 +52,9 @@ const BecomeInstructor = () => {
             <div className='pt-4'>
               <UserSwitchOutlined className='display-1 pb-3' />
               <br />
-              <h2>Setup payout to publish courses on Edemy</h2>
+              <h2>Setup payout to publish courses on Lef</h2>
               <p className='lead text-warning'>
-                Edemy partners with stripe to transfer earnings to your bank
+                Lef partners with stripe to transfer earnings to your bank
                 account
               </p>
 

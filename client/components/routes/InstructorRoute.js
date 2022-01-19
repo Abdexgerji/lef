@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { SyncOutlined } from '@ant-design/icons';
 import InstructorNav from '../nav/InstructorNav';
+import { Context } from '../../context';
+import { toast } from 'react-toastify';
 
 const InstructorRoute = ({ children }) => {
+  const { state, dispatch } = useContext(Context);
+  const { user } = state;
   // state
   const [ok, setOk] = useState(false);
   // router
@@ -20,7 +24,16 @@ const InstructorRoute = ({ children }) => {
       // console.log("INSTRUCTOR ROUTE => ", data);
       if (data.ok) setOk(true);
     } catch (err) {
-      console.log(err);
+      console.log(err.response);
+      if (err.response.data === 'Login again!') {
+        toast('Please Login again!');
+        dispatch({ type: 'LOGOUT' });
+        window.localStorage.removeItem('user');
+        const { data } = await axios.get('/api/logout');
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      }
       setOk(false);
       router.push('/');
     }

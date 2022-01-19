@@ -35,17 +35,19 @@ export const isEnrolled = async (req, res, next) => {
     const user = user1[0][0];
 
     const course1 = await pool.execute(
-      'SELECT * FROM `coure` WHERE slug = ?;',
+      'SELECT * FROM `course` WHERE slug = ?;',
       [req.params.slug]
     );
 
     const course = course1[0][0];
-
+    console.log(req.params);
+    console.log(course);
     const order = await pool.execute(
       'SELECT * FROM `orders` WHERE course_id = ? AND user_id =?;',
-      [course.id, user.id]
+      [course.course_id, user.id]
     );
-    if (order[0][0].length === 0) res.status(403).send(`User hasn't enrolled!`);
+    // console.log(order);
+    if (order[0].length === 0) res.status(403).send(`User hasn't enrolled!`);
     else next();
     // const user = await User.findById(req.user._id).exec();
     // const course = await Course.findOne({ slug: req.params.slug }).exec();
